@@ -2,12 +2,15 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const NodeCache = require("node-cache");
+const path = require("path");
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 3600 }); // cache NAV data for 1 hour
 
 app.use(cors());
 app.use(express.json());
+
+const frontendDir = path.join(__dirname, "..", "frontend", "public");
 
 const AMFI_URL = "https://www.amfiindia.com/spages/NAVAll.txt";
 const CACHE_KEY = "amfi_nav_data";
@@ -254,6 +257,14 @@ app.get("/api/cache/status", (req, res) => {
 app.delete("/api/cache", (req, res) => {
   cache.flushAll();
   res.json({ message: "Cache cleared" });
+});
+
+// ── Frontend hosting (single-service deploys like Railway) ───────────────
+app.use(express.static(frontendDir));
+
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+  return res.sendFile(path.join(frontendDir, "index.html"));
 });
 
 // ── Start server ───────────────────────────────────────────────────────────
