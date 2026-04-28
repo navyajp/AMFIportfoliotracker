@@ -212,7 +212,9 @@ This repo is Railway-ready as a **single Node service**: the backend serves both
 
 1. Create a new Railway project from this GitHub repo.
 2. Use the root as the service directory.
-3. Railway will run `npm start` (already configured in root `package.json`).
+3. Railway will run `npm install` and then `npm start`.
+   - Root `postinstall` installs backend production dependencies.
+   - Root `start` launches `backend/server.js`.
 4. Ensure `PORT` is provided by Railway (automatic).
 
 After deploy, open your Railway URL and the UI + API will both be live on the same domain.
