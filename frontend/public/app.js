@@ -1,5 +1,5 @@
 // ── Config ──────────────────────────────────────────────────────────────────
-const API_BASE = window.API_BASE || "http://localhost:3001/api";
+const API_BASE = window.API_BASE || `${window.location.origin}/api`;
 
 // ── State ────────────────────────────────────────────────────────────────────
 let holdings = [];          // [{ fund, units }]
@@ -30,8 +30,8 @@ const searchSpinner  = document.getElementById("searchSpinner");
     warmCache();
   } catch (e) {
     document.getElementById("navMeta").textContent =
-      "⚠ Backend offline — start the server on port 3001";
-    showToast("Cannot reach backend. Is the server running?", 4000);
+      "⚠ Backend offline — API is not reachable";
+    showToast("Cannot reach backend API.", 4000);
   }
 })();
 
@@ -125,7 +125,7 @@ async function doSearch(q) {
     suggestionBox.classList.add("open");
   } catch (e) {
     searchSpinner.classList.remove("active");
-    showToast("Search failed — is the backend running?");
+    showToast("Search failed — backend API unavailable.");
   }
 }
 

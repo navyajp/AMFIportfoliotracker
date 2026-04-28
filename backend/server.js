@@ -2,12 +2,25 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const NodeCache = require("node-cache");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 3600 }); // cache NAV data for 1 hour
 
 app.use(cors());
 app.use(express.json());
+
+const frontendCandidates = [
+  path.resolve(__dirname, "..", "frontend", "public"), // repo root deploy (server in /backend)
+  path.resolve(__dirname, "frontend", "public"), // single-folder deploy (server at repo root)
+  path.resolve(process.cwd(), "frontend", "public"), // fallback from current working directory
+  path.resolve(process.cwd(), "public"), // fallback when only frontend public is copied
+];
+
+const frontendDir = frontendCandidates.find((dir) =>
+  fs.existsSync(path.join(dir, "index.html"))
+);
 
 const AMFI_URL = "https://www.amfiindia.com/spages/NAVAll.txt";
 const CACHE_KEY = "amfi_nav_data";
@@ -255,6 +268,18 @@ app.delete("/api/cache", (req, res) => {
   cache.flushAll();
   res.json({ message: "Cache cleared" });
 });
+
+// ── Frontend hosting (single-service deploys like Railway) ───────────────
+if (frontendDir) {
+  app.use(express.static(frontendDir));
+
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    return res.sendFile(path.join(frontendDir, "index.html"));
+  });
+} else {
+  console.warn("⚠ Frontend static files not found. Serving API routes only.");
+}
 
 // ── Start server ───────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;

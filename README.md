@@ -205,6 +205,20 @@ const API_BASE = "http://your-server:3001/api";
 
 ---
 
+
+## 🚂 Deploying to Railway
+
+This repo is Railway-ready as a **single Node service**: the backend serves both the API and the frontend static files.
+
+1. Create a new Railway project from this GitHub repo.
+2. Use the root as the service directory.
+3. Railway will run `npm start` (already configured in root `package.json`).
+4. Ensure `PORT` is provided by Railway (automatic).
+
+After deploy, open your Railway URL and the UI + API will both be live on the same domain.
+
+If your Railway service root is set to `backend`, the server now auto-detects common frontend paths to avoid `ENOENT` on `index.html`.
+
 ## 🌍 Deploying to GitHub Pages (Frontend only)
 
 Since GitHub Pages serves static files, the frontend alone (without a backend) will not work unless you deploy the backend separately.
