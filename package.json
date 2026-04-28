@@ -4,6 +4,7 @@
   "description": "Full-stack AMFI Mutual Fund Portfolio Tracker",
   "scripts": {
     "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "postinstall": "cd backend && npm install --omit=dev",
     "start:backend": "cd backend && npm start",
     "start:frontend": "cd frontend && npm start",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\"",
